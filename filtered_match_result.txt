@@ -1,0 +1,9 @@
+﻿Phidias indexed: 1256 items
+=== TEST CIENCIAS ROWS 28-34 (previously zero) ===
+Row 28 [Second (2) A]: MATCH FOUND! Teacher='Rojas Cabanzo , Julieth Andrea', Subject='SCIENCE (Second (2))', Evaluados=319
+Row 29 [Second (2) B]: MATCH FOUND! Teacher='Rojas Cabanzo , Julieth Andrea', Subject='SCIENCE (Second (2))', Evaluados=321
+Row 30 [Second (2) C]: MATCH FOUND! Teacher='Rojas Cabanzo , Julieth Andrea', Subject='SCIENCE (Second (2))', Evaluados=320
+Row 31 [Second (2) D]: MATCH FOUND! Teacher='Rojas Cabanzo , Julieth Andrea', Subject='SCIENCE (Second (2))', Evaluados=317
+Row 32 [Second (2) E]: MATCH FOUND! Teacher='Rojas Cabanzo , Julieth Andrea', Subject='SCIENCE (Second (2))', Evaluados=313
+Row 33 [Second (2) F]: MATCH FOUND! Teacher='Rojas Cabanzo , Julieth Andrea', Subject='SCIENCE (Second (2))', Evaluados=296
+Row 34 [Third (3) A]: MATCH FOUND! Teacher='Rojas Cabanzo , Julieth Andrea', Subject='SCIENCE (Third (3))', Evaluados=232
