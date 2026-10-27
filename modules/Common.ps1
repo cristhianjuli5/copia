@@ -63,28 +63,29 @@ function Get-GradeAndSection {
     )
 
     $c = Format-Text $course
-    $grade = ""
-    $letter = ""
 
-    if     ($c -match "\bpioneros\b|\bpn\b")        { $grade = "pn" }
-    elseif ($c -match "\bfirst garten\b|\bfg\b")    { $grade = "fg" }
-    elseif ($c -match "\bgarten\b|\bgr\b|^g\s")     { $grade = "gr" }
-    elseif ($c -match "\btransition\b|\btr\b|^t\s") { $grade = "tr" }
-    elseif ($c -match "\bfirst\b|\b1\b")            { $grade = "1" }
-    elseif ($c -match "\bsecond\b|\b2\b")           { $grade = "2" }
-    elseif ($c -match "\bthird\b|\b3\b")            { $grade = "3" }
-    elseif ($c -match "\bfourth\b|\b4\b")           { $grade = "4" }
-    elseif ($c -match "\bfifth\b|\b5\b")            { $grade = "5" }
-    elseif ($c -match "\bsixth\b|\b6\b")            { $grade = "6" }
-    elseif ($c -match "\bseventh\b|\b7\b")          { $grade = "7" }
-    elseif ($c -match "\beighth\b|\b8\b")           { $grade = "8" }
-    elseif ($c -match "\bninth\b|\b9\b")            { $grade = "9" }
-    elseif ($c -match "\btenth\b|\b10\b")           { $grade = "10" }
-    elseif ($c -match "\beleventh\b|\b11\b")        { $grade = "11" }
+    # Asignación en expresión única — evita falsos positivos de PSScriptAnalyzer
+    # sobre variables asignadas en ramas elseif separadas.
+    $grade = $(
+        if     ($c -match "\bpioneros\b|\bpn\b")        { "pn" }
+        elseif ($c -match "\bfirst garten\b|\bfg\b")    { "fg" }
+        elseif ($c -match "\bgarten\b|\bgr\b|^g\s")     { "gr" }
+        elseif ($c -match "\btransition\b|\btr\b|^t\s") { "tr" }
+        elseif ($c -match "\bfirst\b|\b1\b")            { "1" }
+        elseif ($c -match "\bsecond\b|\b2\b")           { "2" }
+        elseif ($c -match "\bthird\b|\b3\b")            { "3" }
+        elseif ($c -match "\bfourth\b|\b4\b")           { "4" }
+        elseif ($c -match "\bfifth\b|\b5\b")            { "5" }
+        elseif ($c -match "\bsixth\b|\b6\b")            { "6" }
+        elseif ($c -match "\bseventh\b|\b7\b")          { "7" }
+        elseif ($c -match "\beighth\b|\b8\b")           { "8" }
+        elseif ($c -match "\bninth\b|\b9\b")            { "9" }
+        elseif ($c -match "\btenth\b|\b10\b")           { "10" }
+        elseif ($c -match "\beleventh\b|\b11\b")        { "11" }
+        else                                             { "" }
+    )
 
-    if ($c -match "\b([a-g])\b") {
-        $letter = $matches[1].ToLower()
-    }
+    $letter = if ($c -match "\b([a-g])\b") { $matches[1].ToLower() } else { "" }
 
     return @{
         Grade     = $grade

@@ -77,11 +77,18 @@ function Update-ProgresoReport {
             $sPr.Cells.Item(3, $newStartCol + 2).Value2 = "PHIDIAS"
             $sPr.Cells.Item(3, $newStartCol + 3).Value2 = "PORCENTAJE"
 
-            # Copia en bloque de formatos del ciclo previo
-            $sPr.Range($sPr.Cells.Item(1, $lastCycleCol), $sPr.Cells.Item(3, $lastCycleCol + 3)).Copy() | Out-Null
-            $sPr.Range($sPr.Cells.Item(1, $newStartCol), $sPr.Cells.Item(3, $newStartCol + 3)).PasteSpecial(-4122) | Out-Null
-            $sPr.Range($sPr.Cells.Item(6, $lastCycleCol), $sPr.Cells.Item($nRows, $lastCycleCol + 3)).Copy() | Out-Null
-            $sPr.Range($sPr.Cells.Item(6, $newStartCol), $sPr.Cells.Item($nRows, $newStartCol + 3)).PasteSpecial(-4122) | Out-Null
+            # Copia en bloque de formatos del ciclo previo.
+            # PasteSpecial puede fallar si el SO descarta el portapapeles entre
+            # Copy() y PasteSpecial() (condición de carrera normal en Windows).
+            # En ese caso se omite el copiado de formato y el script continúa.
+            try {
+                $sPr.Range($sPr.Cells.Item(1, $lastCycleCol), $sPr.Cells.Item(3, $lastCycleCol + 3)).Copy() | Out-Null
+                $sPr.Range($sPr.Cells.Item(1, $newStartCol), $sPr.Cells.Item(3, $newStartCol + 3)).PasteSpecial(-4122) | Out-Null
+                $sPr.Range($sPr.Cells.Item(6, $lastCycleCol), $sPr.Cells.Item($nRows, $lastCycleCol + 3)).Copy() | Out-Null
+                $sPr.Range($sPr.Cells.Item(6, $newStartCol), $sPr.Cells.Item($nRows, $newStartCol + 3)).PasteSpecial(-4122) | Out-Null
+            } catch {
+                Write-Warning "[$sheetName] Formato del ciclo previo no copiado (portapapeles no disponible). Se continua."
+            }
 
             $pSheetClean = $sheetToPlantillaMap[$sheetName]
 
