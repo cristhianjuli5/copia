@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Generador Automático de Reporte de Progreso por Periodo.
     Orquesta la indexación de Phidias, extracción de metas de la Plantilla y actualización del reporte.
@@ -10,7 +10,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [string]$TargetCycle = "24"
+    [string]$TargetCycle = "28"
 )
 
 $ErrorActionPreference = "Stop"

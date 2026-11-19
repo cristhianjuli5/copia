@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Módulo para indexar y consultar información de cursos y docentes desde Archivo_Phidias.
 #>
@@ -6,11 +6,11 @@
 # Mapeo base de asignaturas permitidas por hoja en Phidias
 $global:SheetAllowedSubjects = @{
     "MATEMATICAS"         = @("matemat", "mathem", "calcul", "trigono")
-    "INGLES"              = @("ingles", "english")
+    "INGLES"              = @("ingles", "english", "communication and language")
     "FRANCES"             = @("franc")
-    "LENGUA Y LITERATURA" = @("lengua", "literatura", "communication", "language", "comunicacion", "filosof", "investig", "pensamiento global", "marketing", "diseño")
+    "LENGUA Y LITERATURA" = @("lengua", "literatura", "comunicacion", "filosof", "investig", "pensamiento global", "marketing", "diseño")
     "CIENCIAS"            = @("ciencias", "science", "biolog", "quim", "fisic", "environmental", "project based")
-    "SOCIALES"            = @("social", "global", "enterprise", "ciudadan", "project based")
+    "SOCIALES"            = @("sociales", "global", "enterprise", "ciudadan", "project based")
     "TECNOLOGIA"          = @("tecnolog", "technol")
     "EDU_FISICA"          = @("educacion fisica", "physical", "deport", "polimotor")
     "ARTES"               = @("arte", "arts", "danza", "musica", "music", "teatro", "drama", "performing", "audiovisual", "efectos especiales")
@@ -60,14 +60,27 @@ function Get-PhidiasEntries {
                 $curSubject = $rawA.Trim()
             } elseif ($lvl -eq 2) {
                 $curCourse = $rawA.Trim()
+                $subClean = Format-Text $curSubject
+                if ($subClean -match "^club\b|^extracurricular\b") { continue }
+
+                $subInfo = Get-GradeAndSection $curSubject
+                $crsInfo = Get-GradeAndSection $curCourse
+                if ($subInfo.Grade -and $crsInfo.Grade -ne $subInfo.Grade) {
+                    $crsInfo = @{
+                        Grade     = $subInfo.Grade
+                        Letter    = ""
+                        ShortCode = $subInfo.Grade
+                    }
+                }
+
                 $entries += [PSCustomObject]@{
                     TeacherRaw   = $curTeacher
                     TeacherClean = Format-Text $curTeacher
                     SubjectRaw   = $curSubject
-                    SubjectClean = Format-Text $curSubject
+                    SubjectClean = $subClean
                     CourseRaw    = $curCourse
                     CourseClean  = Format-Text $curCourse
-                    CourseInfo   = Get-GradeAndSection $curCourse
+                    CourseInfo   = $crsInfo
                     Evaluados    = $intM
                 }
             }
@@ -104,7 +117,7 @@ function Get-PhidiasSubjectKeywords {
         if ($CurSecPr -eq "global") { return @("global") }
         if ($CurSecPr -eq "enterprise") { return @("enterprise") }
         if ($CurSecPr -eq "ciudadania") { return @("ciudadan") }
-        return @("social", "project based")
+        return @("sociales", "project based")
     }
 
     if ($SheetName -eq "LENGUA Y LITERATURA") {
@@ -172,7 +185,8 @@ function Find-PhidiasEvaluatedCount {
             $isCourseMatch -and $isTeacherMatch
         }
         if ($m) {
-            return $m[0].Evaluados
+            $best = $m | Sort-Object Evaluados -Descending | Select-Object -First 1
+            return $best.Evaluados
         }
     }
 
@@ -200,7 +214,8 @@ function Find-PhidiasEvaluatedCount {
         ($CourseInfo.ShortCode -and $_.CourseInfo.ShortCode -eq $CourseInfo.ShortCode)
     }
     if ($m) {
-        return $m[0].Evaluados
+        $best = $m | Sort-Object Evaluados -Descending | Select-Object -First 1
+        return $best.Evaluados
     }
 
     # Nivel 4: Fallback especial para cursos consolidados por grado (ej. Artes Fifth)

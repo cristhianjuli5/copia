@@ -15,8 +15,8 @@ echo Y genera el nuevo ciclo con formulas y colores en:
 echo   - PROGRESO_POR_PERIODO_ACTUALIZADO.xlsx
 echo ==========================================================
 echo.
-set /p CICLO="Ingresa el numero de Ciclo a generar (Ejemplo: 24) [Presiona ENTER para Ciclo 24]: "
-if "%CICLO%"=="" set CICLO=24
+set /p CICLO="Ingresa el numero de Ciclo a generar (Ejemplo: 28) [Presiona ENTER para Ciclo 28]: "
+if "%CICLO%"=="" set CICLO=28
 echo.
 echo [INFO] Procesando CICLO %CICLO%... Por favor espera unos segundos.
 echo.

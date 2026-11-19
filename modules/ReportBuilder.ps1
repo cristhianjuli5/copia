@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Módulo para generar y actualizar el reporte de Progreso por Periodo.
 #>
@@ -35,8 +35,23 @@ function Update-ProgresoReport {
         throw "No se encontró el archivo base de Progreso en: $PathProgreso"
     }
 
-    # Copiar libro base a la ruta de salida
-    Copy-Item -Path $PathProgreso -Destination $PathSalida -Force
+    # Copiar libro base a la ruta de salida (si está abierto en otra instancia de Excel, intentar cerrarlo primero)
+    $leafSalida = Split-Path -Leaf $PathSalida
+    try {
+        Copy-Item -Path $PathProgreso -Destination $PathSalida -Force
+    } catch {
+        try {
+            $activeExcel = [System.Runtime.InteropServices.Marshal]::GetActiveObject("Excel.Application")
+            foreach ($wbOpen in $activeExcel.Workbooks) {
+                if ($wbOpen.Name -eq $leafSalida) {
+                    $wbOpen.Close($false)
+                    break
+                }
+            }
+        } catch {}
+        Start-Sleep -Milliseconds 500
+        Copy-Item -Path $PathProgreso -Destination $PathSalida -Force
+    }
 
     $wbPr = $ExcelApp.Workbooks.Open($PathSalida)
     try {
@@ -119,9 +134,9 @@ function Update-ProgresoReport {
                 } elseif ($sheetName -eq "ARTES") {
                     if ($col1Clean.Contains("musica")) { $curSecPr = "musica" }
                     elseif ($col1Clean.Contains("teatro")) { $curSecPr = "teatro" }
-                    elseif ($col1Clean.Contains("audiovisual")) { $curSecPr = "audiovisual" }
+                    elseif ($col1Clean.Contains("audiovisual") -or $col1Clean.Contains("audio visual")) { $curSecPr = "audiovisual" }
                     elseif ($col1Clean.Contains("danza")) { $curSecPr = "danza" }
-                    elseif ($col1Clean.Contains("arte y diseno") -or $col1Clean.Contains("arte")) { $curSecPr = "arte" }
+                    elseif ($col1Clean.Contains("arte y diseno") -or $col1Clean.Contains("arte") -or ($col1Clean -eq "primaria" -and $curSecPr -eq "general")) { $curSecPr = "arte" }
                 }
 
                 # Omitir filas vacías, cabeceras o subtotales

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Módulo común con funciones de utilidad para normalización de texto y mapeo de cursos.
 #>
@@ -71,21 +71,25 @@ function Get-GradeAndSection {
         elseif ($c -match "\bfirst garten\b|\bfg\b")    { "fg" }
         elseif ($c -match "\bgarten\b|\bgr\b|^g\s")     { "gr" }
         elseif ($c -match "\btransition\b|\btr\b|^t\s") { "tr" }
-        elseif ($c -match "\bfirst\b|\b1\b")            { "1" }
-        elseif ($c -match "\bsecond\b|\b2\b")           { "2" }
-        elseif ($c -match "\bthird\b|\b3\b")            { "3" }
-        elseif ($c -match "\bfourth\b|\b4\b")           { "4" }
-        elseif ($c -match "\bfifth\b|\b5\b")            { "5" }
-        elseif ($c -match "\bsixth\b|\b6\b")            { "6" }
-        elseif ($c -match "\bseventh\b|\b7\b")          { "7" }
-        elseif ($c -match "\beighth\b|\b8\b")           { "8" }
-        elseif ($c -match "\bninth\b|\b9\b")            { "9" }
-        elseif ($c -match "\btenth\b|\b10\b")           { "10" }
-        elseif ($c -match "\beleventh\b|\b11\b")        { "11" }
+        elseif ($c -match "\btenth\b|\b10[a-g]?\b")     { "10" }
+        elseif ($c -match "\beleventh\b|\b11[a-g]?\b")  { "11" }
+        elseif ($c -match "\bfirst\b|\b1[a-g]?\b")      { "1" }
+        elseif ($c -match "\bsecond\b|\b2[a-g]?\b")     { "2" }
+        elseif ($c -match "\bthird\b|\b3[a-g]?\b")      { "3" }
+        elseif ($c -match "\bfourth\b|\b4[a-g]?\b")     { "4" }
+        elseif ($c -match "\bfifth\b|\b5[a-g]?\b")      { "5" }
+        elseif ($c -match "\bsixth\b|\b6[a-g]?\b")      { "6" }
+        elseif ($c -match "\bseventh\b|\b7[a-g]?\b")    { "7" }
+        elseif ($c -match "\beighth\b|\b8[a-g]?\b")     { "8" }
+        elseif ($c -match "\bninth\b|\b9[a-g]?\b")      { "9" }
         else                                             { "" }
     )
 
-    $letter = if ($c -match "\b([a-g])\b") { $matches[1].ToLower() } else { "" }
+    $letter = $(
+        if ($c -match "\b(?:10|11|[1-9])([a-g])\b") { $matches[1].ToLower() }
+        elseif ($c -match "\b([a-g])\b")            { $matches[1].ToLower() }
+        else                                        { "" }
+    )
 
     return @{
         Grade     = $grade
